@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import requests
 
 app = Flask(__name__)
@@ -13,13 +13,17 @@ def get_swapi_data(endpoint):
     else:
         return {"error": "Não foi possível obter dados da SWAPI"}
 
-# Endpoint para listar personagens
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+
 @app.route('/personagens', methods=['GET'])
 def get_characters():
     data = get_swapi_data('people/')
     return jsonify(data)
 
-# Endpoint para buscar informações detalhadas de um personagem pelo ID
+
 @app.route('/personagens/<int:id>', methods=['GET'])
 def get_character_by_id(id):
     data = get_swapi_data(f'people/{id}/')
