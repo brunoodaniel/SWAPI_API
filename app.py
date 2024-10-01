@@ -1,9 +1,27 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, request
 import requests
+from flask_sqlalchemy import SQLAlchemy
+from mysql.connector import (connection)
+from datetime import date
+import mysql.connector
 
 app = Flask(__name__)
 
 SWAPI_BASE_URL = "https://swapi.dev/api/"
+
+def create_connection():
+    connection = None
+    try:
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='root',         # Seu nome de usuário
+            password='123456',   # Sua senha
+            database='StarWars'  # Nome do seu banco de dados
+        )
+        print("Conexão com o MySQL bem-sucedida")
+    except Error as e:
+        print(f"Erro '{e}' ocorreu")
+    return connection
 
 # Função para buscar dados da SWAPI
 def get_swapi_data(endpoint):
@@ -13,9 +31,10 @@ def get_swapi_data(endpoint):
     else:
         return {"error": "Não foi possível obter dados da SWAPI"}
 
-@app.route('/')
+
+@app.route('/', methods=['GET'])
 def home():
-    return render_template('index.html')
+    return jsonify("ok")
 
 
 @app.route('/personagens', methods=['GET'])
@@ -28,6 +47,22 @@ def get_characters():
 def get_character_by_id(id):
     data = get_swapi_data(f'people/{id}/')
     return jsonify(data)
+
+@app.route('/personagens/<int:id>/save', methods=['GET', 'POST'])
+def add_personagem(id):
+    connection = create_connection()
+
+    swapi_data = get_swapi_data(f'people/{id}/')
+    
+    sql = "INSERT INTO personagens (id, nome, genero) VALUES (%s, %s, %s)"
+    values = (id, swapi_data.get('name'), swapi_data.get('gender'))
+
+    cursor = connection.cursor()
+    cursor.execute(sql, values)
+        
+    connection.commit()
+
+    return jsonify({"message": "Personagem adicionado com sucesso!"}), 201
 
 # Endpoint para listar planetas
 @app.route('/planetas', methods=['GET'])
