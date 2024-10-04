@@ -278,6 +278,7 @@ def delete_especie(id):
 
     return jsonify({"message": "Espécie excluída com sucesso!"}), 200
 
+
 # Rota para salvar os favoritos no banco de dados
 @app.route('/favorito/save', methods=['GET', 'POST'])
 def save_favorito():
@@ -363,6 +364,11 @@ def get_favorito():
         return jsonify(response), 200
     else:
         return jsonify({"message": "Nenhum favorito encontrado!"}), 404
+
+@app.route('/favoritos', methods=['GET'])
+def get_favorites():
+    data = get_swapi_data('species/')
+    return jsonify(data)
 
 if __name__ == '__main__':
     app.run(debug=True)
