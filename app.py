@@ -278,6 +278,93 @@ def delete_especie(id):
 
     return jsonify({"message": "Espécie excluída com sucesso!"}), 200
 
+
+# Rota para salvar os favoritos no banco de dados
+@app.route('/favorito/save', methods=['GET', 'POST'])
+def save_favorito():
+    connection = create_connection()
+    cursor = connection.cursor()
+
+    personagem = get_swapi_data("people/1/")
+    filme = get_swapi_data("films/6/")
+    nave = get_swapi_data("starships/10/")
+    veiculo = get_swapi_data("vehicles/14/")
+    especie = get_swapi_data("species/1/")
+    planeta = get_swapi_data("planets/1/")
+
+    sql = """
+        INSERT INTO favorito (personagem_nome, personagem_ano_nascimento, filme_nome, filme_numero, nave_nome, nave_modelo,
+        veiculo_nome, veiculo_modelo, especie_planeta_natal, especie_linguas, planeta_nome, planeta_populacao)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """
+    values = (
+        personagem['name'],
+        personagem['birth_year'],
+        filme['title'],
+        filme['episode_id'],
+        nave['name'],
+        nave['model'],
+        veiculo['name'],
+        veiculo['model'],
+        especie['homeworld']['name'],
+        ", ".join(especie['language']),
+        planeta['name'],
+        planeta['population']
+    )
+
+    cursor.execute(sql, values)
+    connection.commit()
+
+    return jsonify({"message": "Favoritos salvo com sucesso!"}), 201
+
+# Rota para buscar os favoritos
+@app.route('/getFavorito', methods=['GET'])
+def get_favorito():
+    connection = create_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM favorito LIMIT 1")
+    favorito = cursor.fetchone()
+
+    if favorito:
+        
+        planeta_natal_especie = get_swapi_data(favorito[9])
+
+        response = {
+            "personagem_nome": favorito[1],
+            "personagem_ano_nascimento": favorito[2],
+            "filme_nome": favorito[3],
+            "filme_numero": favorito[4],
+            "nave_nome": favorito[5],
+            "nave_modelo": favorito[6],
+            "veiculo_nome": favorito[7],
+            "veiculo_modelo": favorito[8],
+            "especie_planeta_natal": favorito[9],
+            "especie_linguas": favorito[10],
+            "planeta_nome": favorito[11],
+            "planeta_populacao": favorito[12],
+            "alunos": [
+                {
+                    "nome": "Luiz Felipe",
+                    "matricula": "98021809"
+                },
+                {
+                    "nome": "Bruno Almeida",
+                    "matricula": "98021376"
+                },
+                {
+                    "nome": "Matheus Rezende",
+                    "matricula": "98021793"
+                }
+            ],
+            "curso": "Sistemas de Informação",
+            "universidade": "Univas",
+            "periodo": "Sexto período"
+        }
+        return jsonify(response), 200
+    else:
+        return jsonify({"message": "Nenhum favorito encontrado!"}), 404
+
 @app.route('/favoritos', methods=['GET'])
 def get_favorites():
     data = get_swapi_data('species/')
