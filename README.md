@@ -15,4 +15,5 @@ Para a execução do trabalho foi utilizada a linguagem Python juntamente com o 
 - Quando bater na rota “/favoritos”, retorna um arquivo json de todos objetos que foram favoritados.
 
 Ao acessar a rota "/objeto/save", salva o objeto no banco de dados e o mesmo é consultado através da rota "/favoritos".
+
 Ao acessar a rota "objeto/delete", exclui o objeto do banco de dados e o mesmo não estará mais disponível para a consulta através da rota "/favoritos".
