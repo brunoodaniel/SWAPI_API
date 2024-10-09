@@ -52,14 +52,22 @@ def get_character_by_id(id):
 def add_personagem(id):
     connection = create_connection()
 
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM personagens WHERE id = %s", (id,))
+    personagem_existente = cursor.fetchone()
+
+    if personagem_existente:
+        return jsonify({"error": "Personagem já existe no banco de dados!"}), 400
+
     swapi_data = get_swapi_data(f'people/{id}/')
-    
+
+    if "error" in swapi_data:
+        return jsonify({"error": "Personagem não encontrado na API!"}), 404
+
     sql = "INSERT INTO personagens (id, nome, genero) VALUES (%s, %s, %s)"
     values = (id, swapi_data.get('name'), swapi_data.get('gender'))
 
-    cursor = connection.cursor()
     cursor.execute(sql, values)
-        
     connection.commit()
 
     return jsonify({"message": "Personagem adicionado com sucesso!"}), 201
@@ -68,11 +76,15 @@ def add_personagem(id):
 def delete_personagem(id):
     connection = create_connection()
 
-    sql = "DELETE FROM personagens WHERE id = %s"
-    
     cursor = connection.cursor()
+    cursor.execute("SELECT * FROM personagens WHERE id = %s", (id,))
+    personagem_existente = cursor.fetchone()
+
+    if not personagem_existente:
+        return jsonify({"error": "Personagem não encontrado no banco de dados!"}), 404
+
+    sql = "DELETE FROM personagens WHERE id = %s"
     cursor.execute(sql, (id,))
-        
     connection.commit()
 
     return jsonify({"message": "Personagem excluído com sucesso!"}), 200
@@ -92,15 +104,23 @@ def get_planets_by_id(id):
 def add_planeta(id):
     connection = create_connection()
 
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM planetas WHERE id = %s", (id,))
+    planeta_existente = cursor.fetchone()
+
+    if planeta_existente:
+        return jsonify({"error": "Planeta já existe no banco de dados!"}), 400
+
     swapi_data = get_swapi_data(f'planets/{id}/')
-    
+
+    if "error" in swapi_data:
+        return jsonify({"error": "Planeta não encontrado na API!"}), 404
+
     sql = "INSERT INTO planetas (id, nome, clima, diametro, gravidade, periodo_orbita, populacao, periodo_rotacao) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     values = (id, swapi_data.get('name'), swapi_data.get('climate'), swapi_data.get('diameter'), swapi_data.get('gravity'), swapi_data.get('orbital_period'),
               swapi_data.get('population'), swapi_data.get('rotation_period'))
 
-    cursor = connection.cursor()
     cursor.execute(sql, values)
-        
     connection.commit()
 
     return jsonify({"message": "Planeta adicionado com sucesso!"}), 201
@@ -109,11 +129,15 @@ def add_planeta(id):
 def delete_planeta(id):
     connection = create_connection()
 
-    sql = "DELETE FROM planetas WHERE id = %s"
-    
     cursor = connection.cursor()
+    cursor.execute("SELECT * FROM planetas WHERE id = %s", (id,))
+    planeta_existente = cursor.fetchone()
+
+    if not planeta_existente:
+        return jsonify({"error": "Planeta não encontrado no banco de dados!"}), 404
+
+    sql = "DELETE FROM planetas WHERE id = %s"
     cursor.execute(sql, (id,))
-        
     connection.commit()
 
     return jsonify({"message": "Planeta excluído com sucesso!"}), 200
@@ -133,14 +157,22 @@ def get_starships_by_id(id):
 def add_naves(id):
     connection = create_connection()
 
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM naves WHERE id = %s", (id,))
+    nave_existente = cursor.fetchone()
+
+    if nave_existente:
+        return jsonify({"error": "Nave já existe no banco de dados!"}), 400
+
     swapi_data = get_swapi_data(f'starships/{id}/')
-    
+
+    if "error" in swapi_data:
+        return jsonify({"error": "Nave não encontrada na API!"}), 404
+
     sql = "INSERT INTO naves (id, nome, custo, passageiros) VALUES (%s, %s, %s, %s)"
     values = (id, swapi_data.get('name'), swapi_data.get('cost_in_credits'), swapi_data.get('passengers'))
 
-    cursor = connection.cursor()
     cursor.execute(sql, values)
-        
     connection.commit()
 
     return jsonify({"message": "Nave adicionada com sucesso!"}), 201
@@ -149,11 +181,15 @@ def add_naves(id):
 def delete_nave(id):
     connection = create_connection()
 
-    sql = "DELETE FROM naves WHERE id = %s"
-    
     cursor = connection.cursor()
+    cursor.execute("SELECT * FROM naves WHERE id = %s", (id,))
+    nave_existente = cursor.fetchone()
+
+    if not nave_existente:
+        return jsonify({"error": "Nave não encontrada no banco de dados!"}), 404
+
+    sql = "DELETE FROM naves WHERE id = %s"
     cursor.execute(sql, (id,))
-        
     connection.commit()
 
     return jsonify({"message": "Nave excluída com sucesso!"}), 200
@@ -173,14 +209,22 @@ def get_films_by_id(id):
 def add_filme(id):
     connection = create_connection()
 
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM filmes WHERE id = %s", (id,))
+    filme_existente = cursor.fetchone()
+
+    if filme_existente:
+        return jsonify({"error": "Filme já existe no banco de dados!"}), 400
+
     swapi_data = get_swapi_data(f'films/{id}/')
-    
+
+    if "error" in swapi_data:
+        return jsonify({"error": "Filme não encontrado na API!"}), 404
+
     sql = "INSERT INTO filmes (id, nome, diretor, episodio) VALUES (%s, %s, %s, %s)"
     values = (id, swapi_data.get('title'), swapi_data.get('director'), swapi_data.get('episode_id'))
 
-    cursor = connection.cursor()
     cursor.execute(sql, values)
-        
     connection.commit()
 
     return jsonify({"message": "Filme adicionado com sucesso!"}), 201
@@ -189,11 +233,15 @@ def add_filme(id):
 def delete_filme(id):
     connection = create_connection()
 
-    sql = "DELETE FROM filmes WHERE id = %s"
-    
     cursor = connection.cursor()
+    cursor.execute("SELECT * FROM filmes WHERE id = %s", (id,))
+    filme_existente = cursor.fetchone()
+
+    if not filme_existente:
+        return jsonify({"error": "Filme não encontrado no banco de dados!"}), 404
+
+    sql = "DELETE FROM filmes WHERE id = %s"
     cursor.execute(sql, (id,))
-        
     connection.commit()
 
     return jsonify({"message": "Filme excluído com sucesso!"}), 200
@@ -213,14 +261,22 @@ def get_vehicles_by_id(id):
 def add_veiculo(id):
     connection = create_connection()
 
-    swapi_data = get_swapi_data(f'vehicles/{id}/')
-    
-    sql = "INSERT INTO veiculos (id, nome, modelo, passageiros) VALUES (%s, %s, %s, %s)"
-    values = (id, swapi_data.get('name'), swapi_data.get('model'), swapi_data.get('passengers'))
-
     cursor = connection.cursor()
+    cursor.execute("SELECT * FROM veiculos WHERE id = %s", (id,))
+    veiculo_existente = cursor.fetchone()
+
+    if veiculo_existente:
+        return jsonify({"error": "Veículo já existe no banco de dados!"}), 400
+
+    swapi_data = get_swapi_data(f'vehicles/{id}/')
+
+    if "error" in swapi_data:
+        return jsonify({"error": "Veículo não encontrado na API!"}), 404
+
+    sql = "INSERT INTO veiculos (id, nome, modelo) VALUES (%s, %s, %s)"
+    values = (id, swapi_data.get('name'), swapi_data.get('model'))
+
     cursor.execute(sql, values)
-        
     connection.commit()
 
     return jsonify({"message": "Veículo adicionado com sucesso!"}), 201
@@ -229,11 +285,15 @@ def add_veiculo(id):
 def delete_veiculo(id):
     connection = create_connection()
 
-    sql = "DELETE FROM veiculos WHERE id = %s"
-    
     cursor = connection.cursor()
+    cursor.execute("SELECT * FROM veiculos WHERE id = %s", (id,))
+    veiculo_existente = cursor.fetchone()
+
+    if not veiculo_existente:
+        return jsonify({"error": "Veículo não encontrado no banco de dados!"}), 404
+
+    sql = "DELETE FROM veiculos WHERE id = %s"
     cursor.execute(sql, (id,))
-        
     connection.commit()
 
     return jsonify({"message": "Veículo excluído com sucesso!"}), 200
@@ -253,14 +313,22 @@ def get_species_by_id(id):
 def add_especie(id):
     connection = create_connection()
 
-    swapi_data = get_swapi_data(f'species/{id}/')
-    
-    sql = "INSERT INTO especies (id, nome, lingua, classificacao) VALUES (%s, %s, %s, %s)"
-    values = (id, swapi_data.get('name'), swapi_data.get('language'), swapi_data.get('classification'))
-
     cursor = connection.cursor()
+    cursor.execute("SELECT * FROM especies WHERE id = %s", (id,))
+    especie_existente = cursor.fetchone()
+
+    if especie_existente:
+        return jsonify({"error": "Espécie já existe no banco de dados!"}), 400
+
+    swapi_data = get_swapi_data(f'species/{id}/')
+
+    if "error" in swapi_data:
+        return jsonify({"error": "Espécie não encontrada na API!"}), 404
+
+    sql = "INSERT INTO especies (id, nome, classificacao) VALUES (%s, %s, %s)"
+    values = (id, swapi_data.get('name'), swapi_data.get('classification'))
+
     cursor.execute(sql, values)
-        
     connection.commit()
 
     return jsonify({"message": "Espécie adicionada com sucesso!"}), 201
@@ -269,11 +337,15 @@ def add_especie(id):
 def delete_especie(id):
     connection = create_connection()
 
-    sql = "DELETE FROM especies WHERE id = %s"
-    
     cursor = connection.cursor()
+    cursor.execute("SELECT * FROM especies WHERE id = %s", (id,))
+    especie_existente = cursor.fetchone()
+
+    if not especie_existente:
+        return jsonify({"error": "Espécie não encontrada no banco de dados!"}), 404
+
+    sql = "DELETE FROM especies WHERE id = %s"
     cursor.execute(sql, (id,))
-        
     connection.commit()
 
     return jsonify({"message": "Espécie excluída com sucesso!"}), 200
@@ -291,6 +363,12 @@ def save_favorito():
     especie = get_swapi_data("species/1/")
     planeta = get_swapi_data("planets/1/")
 
+    cursor.execute("SELECT * FROM favorito WHERE id = 1")
+    favorito_existente = cursor.fetchone()
+
+    if favorito_existente:
+        return jsonify({"error": "Favorito já existente no banco de dados!"}), 400
+
     sql = """
         INSERT INTO favorito (personagem_nome, personagem_ano_nascimento, filme_nome, filme_numero, nave_nome, nave_modelo,
         veiculo_nome, veiculo_modelo, especie_planeta_natal, especie_linguas, planeta_nome, planeta_populacao)
@@ -305,7 +383,7 @@ def save_favorito():
         nave['model'],
         veiculo['name'],
         veiculo['model'],
-        especie['homeworld']['name'],
+        especie['homeworld'],
         ", ".join(especie['language']),
         planeta['name'],
         planeta['population']
@@ -315,6 +393,23 @@ def save_favorito():
     connection.commit()
 
     return jsonify({"message": "Favoritos salvo com sucesso!"}), 201
+
+@app.route('/favorito/delete', methods=['GET', 'DELETE'])
+def delete_favorito():
+    connection = create_connection()
+
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM favorito WHERE id = 1")
+    favorito_existente = cursor.fetchone()
+
+    if not favorito_existente:
+        return jsonify({"error": "Favorito não encontrada no banco de dados!"}), 404
+
+    sql = "DELETE FROM favorito WHERE id = 1"
+    cursor.execute(sql)
+    connection.commit()
+
+    return jsonify({"message": "Favorito excluído com sucesso!"}), 200
 
 # Rota para buscar os favoritos
 @app.route('/favorito', methods=['GET'])
