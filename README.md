@@ -39,7 +39,7 @@ create table planetas (
 	nome varchar(100),
 	clima varchar(100),
 	diametro int(10),
-	gravidade int(10),
+	gravidade varchar(30),
 	periodo_orbita int(10),
 	populacao int(10),
 	periodo_rotacao int(10),
